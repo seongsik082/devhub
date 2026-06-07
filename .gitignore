@@ -1,0 +1,15 @@
+.next/
+node_modules/
+dist/
+coverage/
+.env
+.env*.local
+!.env.example
+*.log
+prisma/dev.db
+.tools/
+.npm-cache/
+.vercel-cache/
+
+.vercel
+.env*

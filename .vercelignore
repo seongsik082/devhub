@@ -1,0 +1,9 @@
+.env
+.env*
+.tools/
+.npm-cache/
+.vercel-cache/
+node_modules/
+.next/
+coverage/
+*.log
