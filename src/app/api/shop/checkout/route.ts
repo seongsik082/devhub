@@ -13,7 +13,18 @@ export async function POST() {
     const order = await getDb().$transaction(async (tx) => {
       const cartItems = await tx.cartItem.findMany({
         where: { userId: session.id },
-        include: { product: true },
+        select: {
+          productId: true,
+          quantity: true,
+          product: {
+            select: {
+              name: true,
+              price: true,
+              stock: true,
+              isActive: true,
+            },
+          },
+        },
       });
 
       if (cartItems.length === 0) {

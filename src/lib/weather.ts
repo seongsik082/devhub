@@ -7,6 +7,8 @@ export type WeatherSummary = {
   weatherCode: number;
   description: string;
   time: string;
+  dateLabel: string;
+  updatedTimeLabel: string;
 };
 
 const weatherDescriptions: Record<number, string> = {
@@ -30,6 +32,21 @@ const weatherDescriptions: Record<number, string> = {
   82: "강한 소나기",
   95: "뇌우",
 };
+
+function formatWeatherDate(time: string) {
+  const [datePart, timePart = ""] = time.split("T");
+  const date = new Date(`${datePart}T00:00:00+09:00`);
+  const dateLabel = new Intl.DateTimeFormat("ko-KR", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    weekday: "short",
+  }).format(date);
+  const updatedTimeLabel = timePart.slice(0, 5);
+
+  return { dateLabel, updatedTimeLabel };
+}
 
 type OpenMeteoResponse = {
   current?: {
@@ -75,6 +92,8 @@ export async function getSeoulWeather(): Promise<WeatherSummary | null> {
       return null;
     }
 
+    const { dateLabel, updatedTimeLabel } = formatWeatherDate(current.time);
+
     return {
       city: "서울",
       temperature: current.temperature_2m,
@@ -84,6 +103,8 @@ export async function getSeoulWeather(): Promise<WeatherSummary | null> {
       weatherCode: current.weather_code,
       description: weatherDescriptions[current.weather_code] ?? "날씨 정보",
       time: current.time,
+      dateLabel,
+      updatedTimeLabel,
     };
   } catch {
     return null;

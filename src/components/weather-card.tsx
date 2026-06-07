@@ -15,7 +15,9 @@ export function WeatherCard({ weather }: WeatherCardProps) {
         <div className="weather-box">
           <div>
             <span className="meta">{weather.city}</span>
+            <span className="weather-date">{weather.dateLabel}</span>
             <strong>{weather.description}</strong>
+            <span className="meta">업데이트 {weather.updatedTimeLabel}</span>
           </div>
           <div className="weather-temp">{Math.round(weather.temperature)}°C</div>
           <div className="weather-grid">

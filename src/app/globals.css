@@ -379,6 +379,14 @@ textarea {
   font-size: 20px;
 }
 
+.weather-date {
+  display: block;
+  color: var(--foreground);
+  font-size: 14px;
+  font-weight: 900;
+  margin: 3px 0;
+}
+
 .weather-temp {
   color: var(--primary);
   font-size: 42px;

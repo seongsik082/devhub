@@ -11,12 +11,20 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
+  const db = getDb();
   const [unreadCount, recentNotifications] = await Promise.all([
-    getDb().notification.count({
+    db.notification.count({
       where: { userId: session.id, readAt: null },
     }),
-    getDb().notification.findMany({
+    db.notification.findMany({
       where: { userId: session.id },
+      select: {
+        id: true,
+        title: true,
+        message: true,
+        link: true,
+        readAt: true,
+      },
       orderBy: { createdAt: "desc" },
       take: 3,
     }),

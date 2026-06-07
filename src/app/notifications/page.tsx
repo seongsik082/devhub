@@ -23,6 +23,15 @@ export default async function NotificationsPage() {
   const [notifications, unreadCount] = await Promise.all([
     getDb().notification.findMany({
       where: { userId: session.id },
+      select: {
+        id: true,
+        type: true,
+        title: true,
+        message: true,
+        link: true,
+        readAt: true,
+        createdAt: true,
+      },
       orderBy: { createdAt: "desc" },
       take: 50,
     }),

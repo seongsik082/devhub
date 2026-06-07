@@ -16,7 +16,17 @@ export default async function CartPage() {
 
   const items = await getDb().cartItem.findMany({
     where: { userId: session.id },
-    include: { product: true },
+    select: {
+      id: true,
+      quantity: true,
+      product: {
+        select: {
+          name: true,
+          price: true,
+          stock: true,
+        },
+      },
+    },
     orderBy: { createdAt: "desc" },
   });
   const total = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);

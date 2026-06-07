@@ -38,15 +38,33 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
       : sort === "priceDesc"
         ? { price: "desc" }
         : { createdAt: "desc" };
+  const db = getDb();
   const [products, cartItems] = await Promise.all([
-    getDb().product.findMany({
+    db.product.findMany({
       where: productWhere,
       orderBy: productOrderBy,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        price: true,
+        stock: true,
+      },
     }),
     session
-      ? getDb().cartItem.findMany({
+      ? db.cartItem.findMany({
           where: { userId: session.id },
-          include: { product: true },
+          select: {
+            id: true,
+            quantity: true,
+            product: {
+              select: {
+                name: true,
+                price: true,
+                stock: true,
+              },
+            },
+          },
           orderBy: { createdAt: "desc" },
         })
       : Promise.resolve([]),

@@ -10,23 +10,31 @@ import { WeatherCard } from "@/components/weather-card";
 
 export default async function Home() {
   const session = await readSession();
+  const db = getDb();
   const [posts, tasks, weather] = await Promise.all([
-    getDb().post.findMany({
+    db.post.findMany({
       orderBy: { createdAt: "desc" },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        createdAt: true,
         author: { select: { name: true } },
         _count: { select: { comments: true, likes: true } },
       },
       take: 7,
     }),
     session
-      ? getDb().todoTask.findMany({
+      ? db.todoTask.findMany({
           where: {
             project: { ownerId: session.id },
             status: { not: "DONE" },
           },
           orderBy: [{ dueDate: "asc" }, { createdAt: "desc" }],
-          include: {
+          select: {
+            id: true,
+            title: true,
+            status: true,
             project: {
               select: { id: true, name: true },
             },

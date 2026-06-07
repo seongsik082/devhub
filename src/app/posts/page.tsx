@@ -35,20 +35,25 @@ export default async function PostsPage({ searchParams }: PostsPageProps) {
         ],
       }
     : {};
+  const db = getDb();
 
   const [session, posts, totalPosts] = await Promise.all([
     readSession(),
-    getDb().post.findMany({
+    db.post.findMany({
       where,
       orderBy: { createdAt: "desc" },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        createdAt: true,
         author: { select: { name: true } },
         _count: { select: { comments: true, likes: true } },
       },
       skip: (currentPage - 1) * pageSize,
       take: pageSize,
     }),
-    getDb().post.count({ where }),
+    db.post.count({ where }),
   ]);
   const totalPages = Math.max(Math.ceil(totalPosts / pageSize), 1);
 

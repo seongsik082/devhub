@@ -159,6 +159,13 @@ User 1 ── * Notification
 | `readAt` | DateTime? | Null means unread |
 | `createdAt` | DateTime | Created timestamp |
 
+## Optimization Indexes
+
+- `Product(isActive, price)` supports shop stock/sale filters with price sorting.
+- `Order(userId, createdAt)` supports user order history.
+- `Notification(userId, readAt)` supports unread notification counts.
+- `Notification(userId, createdAt)` supports recent notification lists.
+
 ## TodoTask
 
 | Field | Type | Notes |

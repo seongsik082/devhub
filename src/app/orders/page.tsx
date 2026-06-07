@@ -15,7 +15,20 @@ export default async function OrdersPage() {
 
   const orders = await getDb().order.findMany({
     where: { userId: session.id },
-    include: { items: true },
+    select: {
+      id: true,
+      status: true,
+      totalAmount: true,
+      createdAt: true,
+      items: {
+        select: {
+          id: true,
+          productName: true,
+          quantity: true,
+          subtotal: true,
+        },
+      },
+    },
     orderBy: { createdAt: "desc" },
   });
 

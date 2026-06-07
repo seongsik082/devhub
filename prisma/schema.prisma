@@ -126,6 +126,7 @@ model Product {
   updatedAt   DateTime    @updatedAt
 
   @@index([isActive])
+  @@index([isActive, price])
   @@index([createdAt])
 }
 
@@ -154,6 +155,7 @@ model Order {
   updatedAt   DateTime    @updatedAt
 
   @@index([userId])
+  @@index([userId, createdAt])
   @@index([status])
   @@index([createdAt])
 }
@@ -185,6 +187,8 @@ model Notification {
   createdAt DateTime         @default(now())
 
   @@index([userId])
+  @@index([userId, readAt])
+  @@index([userId, createdAt])
   @@index([readAt])
   @@index([createdAt])
 }

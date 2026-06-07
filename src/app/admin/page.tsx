@@ -35,6 +35,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     redirect("/dashboard");
   }
 
+  const db = getDb();
   const [
     userCount,
     postCount,
@@ -51,19 +52,19 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     attachments,
     weather,
   ] = await Promise.all([
-    getDb().user.count(),
-    getDb().post.count(),
-    getDb().comment.count(),
-    getDb().todoProject.count(),
-    getDb().todoTask.count(),
-    getDb().product.count(),
-    getDb().order.count(),
-    getDb().postAttachment.count(),
-    getDb().order.aggregate({
+    db.user.count(),
+    db.post.count(),
+    db.comment.count(),
+    db.todoProject.count(),
+    db.todoTask.count(),
+    db.product.count(),
+    db.order.count(),
+    db.postAttachment.count(),
+    db.order.aggregate({
       where: { status: { not: "CANCELLED" } },
       _sum: { totalAmount: true },
     }),
-    getDb().user.findMany({
+    db.user.findMany({
       where: query
         ? {
             OR: [
@@ -90,7 +91,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
       },
       take: 30,
     }),
-    getDb().product.findMany({
+    db.product.findMany({
       where: query
         ? {
             OR: [
@@ -100,9 +101,17 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           }
         : undefined,
       orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        price: true,
+        stock: true,
+        isActive: true,
+      },
       take: 30,
     }),
-    getDb().order.findMany({
+    db.order.findMany({
       where: {
         ...(orderStatus !== "ALL" ? { status: orderStatus } : {}),
         ...(query
@@ -116,14 +125,25 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             }
           : {}),
       } satisfies Prisma.OrderWhereInput,
-      include: {
+      select: {
+        id: true,
+        status: true,
+        totalAmount: true,
+        createdAt: true,
         user: { select: { name: true, email: true } },
-        items: true,
+        items: {
+          select: {
+            id: true,
+            productName: true,
+            quantity: true,
+            subtotal: true,
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
       take: 20,
     }),
-    getDb().postAttachment.findMany({
+    db.postAttachment.findMany({
       where: query
         ? {
             OR: [
@@ -133,7 +153,10 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             ],
           }
         : undefined,
-      include: {
+      select: {
+        id: true,
+        fileName: true,
+        size: true,
         post: {
           select: {
             id: true,

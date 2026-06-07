@@ -264,3 +264,29 @@ Most backend systems need to know who is making a request before they can decide
 - Modeling read/unread state.
 - User-scoped update APIs.
 - Reusing notification creation through a small helper function.
+
+## Optimization Pass: Weather Date And Query Diet
+
+### Weather Date
+
+- The weather card now shows today's Seoul date and the last weather update time.
+- The date is derived from Open-Meteo's `current.time` with the `Asia/Seoul` timezone.
+
+### Query Optimization
+
+- List pages now use Prisma `select` to fetch only fields rendered by the UI.
+- Home, posts, shop, dashboard, cart, orders, notifications, and admin pages were trimmed.
+- Repeated `getDb()` calls inside the same page were reduced by storing the lazy Prisma client in a local `db` variable.
+
+### Index Optimization
+
+- Added composite indexes for frequent access paths:
+  - products filtered by `isActive` and sorted by `price`
+  - orders listed by `userId` and `createdAt`
+  - notifications filtered by `userId`, `readAt`, and `createdAt`
+
+### Backend Skills Practiced
+
+- Avoid over-fetching relational data.
+- Match indexes to real query patterns.
+- Keep external API data display-friendly without changing the upstream API.
