@@ -94,6 +94,7 @@ textarea {
 .portal-search {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 14px;
   min-height: 62px;
   border: 2px solid var(--primary);
@@ -116,7 +117,7 @@ textarea {
 
 .portal-menu {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 8px;
   border: 1px solid rgba(213, 223, 239, 0.9);
   border-radius: 8px;
@@ -411,6 +412,7 @@ textarea {
 .nav-links {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 12px;
 }
 
@@ -623,7 +625,7 @@ textarea {
 }
 
 .admin-metrics {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
 }
 
 .compact-metric {
@@ -632,7 +634,7 @@ textarea {
 
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 16px;
 }
 
@@ -708,7 +710,7 @@ textarea {
 
 .cart-add-form {
   display: grid;
-  grid-template-columns: 84px 1fr;
+  grid-template-columns: minmax(74px, 90px) minmax(120px, 1fr);
   gap: 8px;
   align-items: center;
 }
@@ -731,7 +733,7 @@ textarea {
 
 .cart-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(210px, 0.8fr);
+  grid-template-columns: minmax(0, 1fr) auto minmax(220px, 0.8fr);
   gap: 16px;
   align-items: center;
   border-bottom: 1px solid var(--border);
@@ -812,7 +814,7 @@ textarea {
 
 .admin-product-edit {
   display: grid;
-  grid-template-columns: minmax(130px, 1fr) minmax(160px, 1.3fr) 110px 90px auto auto;
+  grid-template-columns: minmax(150px, 1fr) minmax(180px, 1.3fr) minmax(100px, 0.5fr) minmax(80px, 0.4fr) auto auto;
   gap: 8px;
   align-items: center;
 }
