@@ -132,11 +132,9 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
               <button className="button primary" type="submit">
                 적용
               </button>
-              {query || stockFilter !== "all" || sort !== "newest" ? (
-                <Link className="button" href="/shop">
-                  초기화
-                </Link>
-              ) : null}
+              <Link className="button" href="/shop">
+                초기화
+              </Link>
             </form>
 
             <p className="meta result-meta">
