@@ -22,6 +22,7 @@ model User {
   cartItems    CartItem[]
   orders       Order[]
   notifications Notification[]
+  auditLogs     AuditLog[] @relation("AuditActor")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
@@ -193,6 +194,37 @@ model Notification {
   @@index([createdAt])
 }
 
+model LoginAttempt {
+  id        String   @id @default(cuid())
+  email     String
+  ipAddress String?
+  success   Boolean
+  reason    String?
+  createdAt DateTime @default(now())
+
+  @@index([email, createdAt])
+  @@index([ipAddress, createdAt])
+  @@index([success, createdAt])
+}
+
+model AuditLog {
+  id           String      @id @default(cuid())
+  actorId      String?
+  actor        User?       @relation("AuditActor", fields: [actorId], references: [id], onDelete: SetNull)
+  action       AuditAction
+  targetType   String
+  targetId     String?
+  summary      String
+  metadata     Json?
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime    @default(now())
+
+  @@index([actorId])
+  @@index([action])
+  @@index([createdAt])
+}
+
 enum Role {
   USER
   ADMIN
@@ -216,4 +248,12 @@ enum NotificationType {
   ORDER
   SECURITY
   SYSTEM
+}
+
+enum AuditAction {
+  ROLE_CHANGE
+  PASSWORD_RESET
+  PRODUCT_CREATE
+  PRODUCT_UPDATE
+  ORDER_STATUS_CHANGE
 }

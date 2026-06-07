@@ -50,6 +50,8 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     products,
     orders,
     attachments,
+    auditLogs,
+    recentFailedLogins,
     weather,
   ] = await Promise.all([
     db.user.count(),
@@ -168,6 +170,30 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
       orderBy: { createdAt: "desc" },
       take: 10,
     }),
+    db.auditLog.findMany({
+      select: {
+        id: true,
+        action: true,
+        summary: true,
+        ipAddress: true,
+        createdAt: true,
+        actor: { select: { name: true, email: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 12,
+    }),
+    db.loginAttempt.findMany({
+      where: { success: false },
+      select: {
+        id: true,
+        email: true,
+        ipAddress: true,
+        reason: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: "desc" },
+      take: 12,
+    }),
     getSeoulWeather(),
   ]);
 
@@ -259,6 +285,62 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           </div>
 
           <WeatherCard weather={weather} />
+
+          <section className="panel stack">
+            <div className="section-header compact">
+              <div>
+                <h2>보안 감사</h2>
+                <p className="muted">
+                  최근 관리자 작업과 로그인 실패 기록을 확인합니다.
+                </p>
+              </div>
+            </div>
+
+            <div className="security-grid">
+              <div className="stack">
+                <strong>관리자 작업 로그</strong>
+                {auditLogs.length === 0 ? (
+                  <div className="portal-empty">아직 감사 로그가 없습니다.</div>
+                ) : (
+                  <div className="security-list">
+                    {auditLogs.map((log) => (
+                      <article className="security-row" key={log.id}>
+                        <div>
+                          <strong>{log.action}</strong>
+                          <span className="meta">
+                            {log.actor?.name ?? "삭제된 사용자"} · {formatDateTime(log.createdAt)}
+                          </span>
+                          <span className="muted">{log.summary}</span>
+                        </div>
+                        <span className="badge">{log.ipAddress ?? "IP 없음"}</span>
+                      </article>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="stack">
+                <strong>최근 로그인 실패</strong>
+                {recentFailedLogins.length === 0 ? (
+                  <div className="portal-empty">최근 로그인 실패가 없습니다.</div>
+                ) : (
+                  <div className="security-list">
+                    {recentFailedLogins.map((attempt) => (
+                      <article className="security-row" key={attempt.id}>
+                        <div>
+                          <strong>{attempt.email}</strong>
+                          <span className="meta">
+                            {attempt.reason ?? "실패"} · {formatDateTime(attempt.createdAt)}
+                          </span>
+                        </div>
+                        <span className="badge">{attempt.ipAddress ?? "IP 없음"}</span>
+                      </article>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
 
           <section className="panel stack">
             <div className="section-header compact">

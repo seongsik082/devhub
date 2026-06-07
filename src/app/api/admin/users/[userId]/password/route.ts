@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { readAdminSession } from "@/lib/admin";
 import { getDb } from "@/lib/db";
 import { createNotification } from "@/lib/notifications";
+import { createAuditLog, getRequestMeta } from "@/lib/security";
 import { adminPasswordSchema } from "@/lib/validation";
 
 type AdminPasswordRouteContext = {
@@ -11,6 +12,7 @@ type AdminPasswordRouteContext = {
 
 export async function PATCH(request: Request, context: AdminPasswordRouteContext) {
   const admin = await readAdminSession();
+  const requestMeta = getRequestMeta(request);
 
   if (!admin) {
     return NextResponse.json({ error: "관리자 권한이 필요합니다." }, { status: 403 });
@@ -46,6 +48,15 @@ export async function PATCH(request: Request, context: AdminPasswordRouteContext
     title: "비밀번호가 관리자에 의해 변경되었습니다",
     message: `${admin.name} 관리자가 계정 비밀번호를 변경했습니다.`,
     link: "/account/password",
+  });
+
+  await createAuditLog({
+    actorId: admin.id,
+    action: "PASSWORD_RESET",
+    targetType: "User",
+    targetId: userId,
+    summary: `${admin.email} reset a user password`,
+    ...requestMeta,
   });
 
   return NextResponse.json({ ok: true });

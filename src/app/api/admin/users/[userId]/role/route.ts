@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { readAdminSession } from "@/lib/admin";
 import { getDb } from "@/lib/db";
+import { createAuditLog, getRequestMeta } from "@/lib/security";
 import { adminRoleSchema } from "@/lib/validation";
 
 type AdminUserRouteContext = {
@@ -9,6 +10,7 @@ type AdminUserRouteContext = {
 
 export async function PATCH(request: Request, context: AdminUserRouteContext) {
   const admin = await readAdminSession();
+  const requestMeta = getRequestMeta(request);
 
   if (!admin) {
     return NextResponse.json({ error: "관리자 권한이 필요합니다." }, { status: 403 });
@@ -43,6 +45,16 @@ export async function PATCH(request: Request, context: AdminUserRouteContext) {
     where: { id: userId },
     data: { role: parsed.data.role },
     select: { id: true, role: true },
+  });
+
+  await createAuditLog({
+    actorId: admin.id,
+    action: "ROLE_CHANGE",
+    targetType: "User",
+    targetId: userId,
+    summary: `${admin.email} changed user role to ${updated.role}`,
+    metadata: { role: updated.role },
+    ...requestMeta,
   });
 
   return NextResponse.json({ user: updated });

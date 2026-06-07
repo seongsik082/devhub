@@ -166,6 +166,32 @@ User 1 ── * Notification
 - `Notification(userId, readAt)` supports unread notification counts.
 - `Notification(userId, createdAt)` supports recent notification lists.
 
+## LoginAttempt
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `id` | String | Primary key |
+| `email` | String | Attempted login email |
+| `ipAddress` | String? | Request IP when available |
+| `success` | Boolean | Whether the login succeeded |
+| `reason` | String? | Failure reason |
+| `createdAt` | DateTime | Created timestamp |
+
+## AuditLog
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `id` | String | Primary key |
+| `actorId` | String? | Admin user who performed the action |
+| `action` | AuditAction | Privileged action type |
+| `targetType` | String | Target resource type |
+| `targetId` | String? | Target resource id |
+| `summary` | String | Human-readable event summary |
+| `metadata` | Json? | Structured extra data |
+| `ipAddress` | String? | Request IP when available |
+| `userAgent` | String? | Browser/client metadata |
+| `createdAt` | DateTime | Created timestamp |
+
 ## TodoTask
 
 | Field | Type | Notes |

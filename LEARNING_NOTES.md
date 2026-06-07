@@ -290,3 +290,31 @@ Most backend systems need to know who is making a request before they can decide
 - Avoid over-fetching relational data.
 - Match indexes to real query patterns.
 - Keep external API data display-friendly without changing the upstream API.
+
+## Milestone 8: Security Hardening
+
+### Login Attempt Limiting
+
+- Every login attempt is recorded in `LoginAttempt`.
+- Failed attempts are counted by email and IP address within a 15 minute window.
+- After 5 failed attempts, the login API returns `429` and asks the user to try again later.
+- Successful attempts are also recorded for basic security history.
+
+### Admin Audit Logs
+
+- Admin actions are recorded in `AuditLog`.
+- Logged actions include role changes, password resets, product creation/update, and order status changes.
+- Each log stores actor, target, summary, optional metadata, IP address, user agent, and timestamp.
+
+### Admin Security Dashboard
+
+- `/admin` now shows recent admin audit logs.
+- It also shows recent failed login attempts.
+- This gives operators a quick place to spot suspicious account or admin activity.
+
+### Backend Skills Practiced
+
+- Rate limiting with persistent storage.
+- Audit logging for privileged operations.
+- Capturing request metadata from headers.
+- Keeping security checks server-side instead of trusting UI state.

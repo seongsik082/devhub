@@ -1330,6 +1330,33 @@ textarea {
   display: block;
 }
 
+.security-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.security-list {
+  display: grid;
+  gap: 8px;
+}
+
+.security-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-soft);
+  padding: 12px;
+}
+
+.security-row strong,
+.security-row span {
+  display: block;
+}
+
 .textarea {
   width: 100%;
   min-height: 180px;
@@ -1625,6 +1652,8 @@ textarea {
   .shop-filter,
   .admin-search,
   .notification-card,
+  .security-grid,
+  .security-row,
   .admin-product-edit,
   .cart-row {
     grid-template-columns: 1fr;

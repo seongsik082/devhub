@@ -261,6 +261,22 @@ Requires login and notification ownership. Marks one notification as read.
 
 Requires login. Marks all unread notifications for the current user as read.
 
+## Security
+
+### Login Rate Limiting
+
+`POST /api/auth/login` records every login attempt. If the same email or IP has 5 failed attempts within 15 minutes, the API returns `429`.
+
+### Admin Audit Logging
+
+The following admin APIs create audit logs when successful:
+
+- `PATCH /api/admin/users/:userId/role`
+- `PATCH /api/admin/users/:userId/password`
+- `POST /api/admin/products`
+- `PATCH /api/admin/products/:productId`
+- `PATCH /api/admin/orders/:orderId`
+
 ## Shop
 
 ### POST `/api/shop/cart`
