@@ -113,7 +113,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
               </Link>
             </div>
 
-            <form className="search-toolbar shop-filter" action="/shop">
+            <form className="search-toolbar shop-filter" action="/shop" key={`${query}:${stockFilter}:${sort}`}>
               <input
                 aria-label="상품 검색"
                 defaultValue={query}
@@ -132,9 +132,9 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
               <button className="button primary" type="submit">
                 적용
               </button>
-              <Link className="button" href="/shop">
+              <a className="button" href="/shop">
                 초기화
-              </Link>
+              </a>
             </form>
 
             <p className="meta result-meta">
