@@ -285,6 +285,32 @@ textarea {
   gap: 10px;
 }
 
+.profile-preview {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 18px;
+  align-items: center;
+}
+
+.profile-preview img,
+.profile-avatar-fallback {
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.profile-avatar-fallback {
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(135deg, rgba(23, 99, 232, 0.16), rgba(19, 168, 158, 0.18)),
+    var(--panel-soft);
+  color: var(--primary-dark);
+  font-size: 44px;
+  font-weight: 900;
+}
+
 .mini-status-list {
   display: grid;
   gap: 8px;
@@ -1093,6 +1119,115 @@ textarea {
   line-height: 1.8;
 }
 
+.post-author-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.post-author-line img,
+.post-author-line span {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+}
+
+.post-author-line img {
+  object-fit: cover;
+}
+
+.post-author-line span {
+  display: grid;
+  place-items: center;
+  background: var(--panel-soft);
+  color: var(--primary-dark);
+  font-weight: 900;
+}
+
+.attachment-list {
+  display: grid;
+  gap: 12px;
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+}
+
+.attachment-list h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.attachment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.attachment-card {
+  display: grid;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-soft);
+  padding: 10px;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.attachment-card:hover {
+  border-color: rgba(23, 99, 232, 0.36);
+  box-shadow: 0 14px 30px rgba(16, 24, 40, 0.1);
+  transform: translateY(-1px);
+}
+
+.attachment-card img,
+.attachment-file-icon {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 8px;
+}
+
+.attachment-card img {
+  object-fit: cover;
+}
+
+.attachment-file-icon {
+  display: grid;
+  place-items: center;
+  background: white;
+  color: var(--primary);
+  font-weight: 900;
+}
+
+.attachment-card strong,
+.attachment-card span {
+  display: block;
+}
+
+.attachment-admin-list {
+  display: grid;
+  gap: 8px;
+}
+
+.attachment-admin-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-soft);
+  padding: 12px;
+}
+
+.attachment-admin-row strong,
+.attachment-admin-row span {
+  display: block;
+}
+
 .textarea {
   width: 100%;
   min-height: 180px;
@@ -1383,6 +1518,7 @@ textarea {
   .product-grid,
   .shop-hero,
   .shop-layout,
+  .profile-preview,
   .admin-product-edit,
   .cart-row {
     grid-template-columns: 1fr;

@@ -32,6 +32,18 @@ export const changePasswordSchema = z
     path: ["confirmPassword"],
   });
 
+export const profileSchema = z.object({
+  name: z.string().trim().min(2, "이름은 2자 이상이어야 합니다.").max(40),
+  bio: z.string().trim().max(300, "소개는 300자 이하로 입력해주세요.").optional().or(z.literal("")),
+  avatarUrl: z
+    .string()
+    .trim()
+    .url("올바른 이미지 URL을 입력해주세요.")
+    .max(500)
+    .optional()
+    .or(z.literal("")),
+});
+
 export const postSchema = z.object({
   title: z.string().trim().min(2, "제목은 2자 이상이어야 합니다.").max(120),
   content: z.string().trim().min(10, "본문은 10자 이상이어야 합니다.").max(8000),

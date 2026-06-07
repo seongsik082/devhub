@@ -14,12 +14,10 @@ export function PostForm() {
     setIsLoading(true);
 
     const formData = new FormData(event.currentTarget);
-    const payload = Object.fromEntries(formData.entries());
 
     const response = await fetch("/api/posts", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: formData,
     });
 
     const data = (await response.json()) as { error?: string; post?: { id: string } };
@@ -51,6 +49,18 @@ export function PostForm() {
           minLength={10}
           required
         />
+      </div>
+
+      <div className="field">
+        <label htmlFor="attachments">첨부파일</label>
+        <input
+          accept="image/png,image/jpeg,image/webp,application/pdf,text/plain"
+          id="attachments"
+          multiple
+          name="attachments"
+          type="file"
+        />
+        <p className="meta">최대 3개, 파일당 1MB까지 첨부할 수 있습니다.</p>
       </div>
 
       {error ? <p className="error">{error}</p> : null}

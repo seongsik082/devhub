@@ -9,6 +9,8 @@
 | `name` | String | Display name |
 | `passwordHash` | String | Hashed password |
 | `role` | Role | `USER` or `ADMIN` |
+| `bio` | String? | Optional user introduction |
+| `avatarUrl` | String? | Optional profile image URL |
 | `createdAt` | DateTime | Created timestamp |
 | `updatedAt` | DateTime | Updated timestamp |
 
@@ -57,6 +59,7 @@ Product 1 ── * CartItem
 User 1 ── * Order
 Order 1 ── * OrderItem
 Product 1 ── * OrderItem
+Post 1 ── * PostAttachment
 ```
 
 ## PostLike
@@ -69,6 +72,18 @@ Product 1 ── * OrderItem
 | `createdAt` | DateTime | Created timestamp |
 
 `postId` and `userId` are unique together, so a user can like the same post only once.
+
+## PostAttachment
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `id` | String | Primary key |
+| `postId` | String | References `Post.id` |
+| `fileName` | String | Original file name |
+| `mimeType` | String | Uploaded file MIME type |
+| `size` | Int | File size in bytes |
+| `dataUrl` | String | Small file content stored as a data URL |
+| `createdAt` | DateTime | Created timestamp |
 
 ## TodoProject
 

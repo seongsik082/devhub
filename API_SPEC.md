@@ -211,6 +211,42 @@ Success:
 
 The current implementation is a rule-based DevHub helper. It can later be replaced with an LLM-backed response.
 
+## Account Profile
+
+### PATCH `/api/account/profile`
+
+Requires login. Updates the current user's profile and refreshes the session cookie.
+
+```json
+{
+  "name": "김성식",
+  "bio": "백엔드 개발자를 목표로 실습 중입니다.",
+  "avatarUrl": "https://example.com/avatar.png"
+}
+```
+
+## Post Attachments
+
+### POST `/api/posts`
+
+Requires login. The endpoint accepts JSON for plain posts or `multipart/form-data` for posts with attachments.
+
+Multipart fields:
+
+- `title`
+- `content`
+- `attachments`: up to 3 files
+
+Allowed file types:
+
+- `image/png`
+- `image/jpeg`
+- `image/webp`
+- `application/pdf`
+- `text/plain`
+
+Each file must be 1MB or smaller.
+
 ## Shop
 
 ### POST `/api/shop/cart`

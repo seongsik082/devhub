@@ -140,6 +140,7 @@ export default async function Home() {
                 <Link href="/todos">프로젝트 만들기</Link>
                 <Link href="/posts/new">게시글 쓰기</Link>
                 <Link href="/shop">상품 둘러보기</Link>
+                <Link href="/account/profile">프로필 수정</Link>
                 <Link href="/account/password">비밀번호 변경</Link>
               </div>
             </section>
@@ -217,6 +218,9 @@ export default async function Home() {
                   <Link className="button" href="/cart">
                     장바구니
                   </Link>
+                  <Link className="button" href="/account/profile">
+                    프로필
+                  </Link>
                 </div>
               ) : (
                 <div className="portal-empty">
@@ -249,6 +253,7 @@ export default async function Home() {
                 <span>챗봇 기본형 추가</span>
                 <span>날씨 연결 추가</span>
                 <span>쇼핑/주문 4차 진행</span>
+                <span>프로필/첨부 5차 진행</span>
               </div>
             </section>
           </aside>

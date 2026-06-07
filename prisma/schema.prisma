@@ -13,6 +13,8 @@ model User {
   name         String
   passwordHash String
   role         Role     @default(USER)
+  bio          String?
+  avatarUrl    String?
   posts        Post[]
   comments     Comment[]
   postLikes    PostLike[]
@@ -31,10 +33,25 @@ model Post {
   author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   comments  Comment[]
   likes     PostLike[]
+  attachments PostAttachment[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
   @@index([authorId])
+  @@index([createdAt])
+}
+
+model PostAttachment {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  fileName  String
+  mimeType  String
+  size      Int
+  dataUrl   String
+  createdAt DateTime @default(now())
+
+  @@index([postId])
   @@index([createdAt])
 }
 

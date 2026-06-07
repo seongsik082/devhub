@@ -28,6 +28,9 @@ export default async function DashboardPage() {
             <Link className="button" href="/todos">
               할 일
             </Link>
+            <Link className="button" href="/account/profile">
+              프로필
+            </Link>
             <LogoutButton />
           </div>
         </nav>
@@ -36,7 +39,7 @@ export default async function DashboardPage() {
           <div>
             <h1>대시보드</h1>
             <p className="muted">
-              인증, 게시판, 계정 보안, 할 일 관리 기능을 단계별로 확장하고 있습니다.
+              인증, 게시판, 계정 보안, 할 일, 쇼핑, 프로필 기능을 단계별로 확장하고 있습니다.
             </p>
           </div>
 
@@ -45,6 +48,7 @@ export default async function DashboardPage() {
               <strong>현재 단계</strong>
               <span className="muted">2차: 게시판과 댓글</span>
               <span className="muted">3차: 할 일 관리 진행 중</span>
+              <span className="muted">5차: 프로필과 첨부파일</span>
             </div>
             <div className="panel stack">
               <strong>로그인 계정</strong>
@@ -79,6 +83,18 @@ export default async function DashboardPage() {
             <div className="inline-actions">
               <Link className="button primary" href="/todos">
                 할 일 관리
+              </Link>
+            </div>
+          </div>
+
+          <div className="panel stack">
+            <strong>프로필</strong>
+            <span className="muted">
+              이름, 소개, 프로필 이미지를 수정하고 게시글 작성자 정보를 꾸밉니다.
+            </span>
+            <div className="inline-actions">
+              <Link className="button primary" href="/account/profile">
+                프로필 수정
               </Link>
             </div>
           </div>

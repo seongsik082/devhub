@@ -21,7 +21,10 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
     getDb().post.findUnique({
       where: { id: postId },
       include: {
-        author: { select: { id: true, name: true, email: true } },
+        author: { select: { id: true, name: true, email: true, bio: true, avatarUrl: true } },
+        attachments: {
+          orderBy: { createdAt: "asc" },
+        },
         comments: {
           orderBy: { createdAt: "asc" },
           include: {
@@ -82,10 +85,19 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
           <div className="section-header">
             <div>
               <h1>{post.title}</h1>
-              <p className="meta">
-                {post.author.name} · {formatDateTime(post.createdAt)} · 좋아요{" "}
-                {post._count.likes}개
-              </p>
+              <div className="post-author-line">
+                {post.author.avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img alt={`${post.author.name} 프로필`} src={post.author.avatarUrl} />
+                ) : (
+                  <span>{post.author.name.slice(0, 1)}</span>
+                )}
+                <p className="meta">
+                  {post.author.name} · {formatDateTime(post.createdAt)} · 좋아요{" "}
+                  {post._count.likes}개
+                </p>
+              </div>
+              {post.author.bio ? <p className="muted">{post.author.bio}</p> : null}
             </div>
             <div className="inline-actions">
               {session ? (
@@ -99,6 +111,33 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
             </div>
           </div>
           <div className="prose">{post.content}</div>
+
+          {post.attachments.length > 0 ? (
+            <section className="attachment-list">
+              <h2>첨부파일 {post.attachments.length}개</h2>
+              <div className="attachment-grid">
+                {post.attachments.map((attachment) => (
+                  <a
+                    className="attachment-card"
+                    download={attachment.fileName}
+                    href={attachment.dataUrl}
+                    key={attachment.id}
+                  >
+                    {attachment.mimeType.startsWith("image/") ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img alt={attachment.fileName} src={attachment.dataUrl} />
+                    ) : (
+                      <div className="attachment-file-icon">FILE</div>
+                    )}
+                    <span>
+                      <strong>{attachment.fileName}</strong>
+                      <span className="meta">{Math.ceil(attachment.size / 1024)}KB</span>
+                    </span>
+                  </a>
+                ))}
+              </div>
+            </section>
+          ) : null}
         </article>
 
         <section className="stack" style={{ marginTop: 24 }}>

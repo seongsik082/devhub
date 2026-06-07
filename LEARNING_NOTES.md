@@ -181,3 +181,30 @@ Most backend systems need to know who is making a request before they can decide
 - Transactional writes with stock validation.
 - Admin operations separated from public user operations.
 - Seed scripts for repeatable test data.
+
+## Milestone 5: Profiles And Attachments
+
+### Profile Management
+
+- `User` now has optional `bio` and `avatarUrl` fields.
+- `/account/profile` lets a logged-in user update display name, introduction, and profile image URL.
+- After changing the name, the auth cookie is refreshed so the navbar immediately reflects the new display name.
+
+### Post Attachments
+
+- `PostAttachment` belongs to a post and stores file metadata plus a small `dataUrl`.
+- The first version accepts images, PDF, and text files.
+- Upload limits are intentionally small: up to 3 files per post and 1MB per file.
+- This DB-backed approach works on Vercel because serverless local disk is not reliable persistent storage.
+
+### Admin Visibility
+
+- Admin metrics include attachment counts.
+- The admin page lists recent uploaded files and links back to their posts.
+
+### Backend Skills Practiced
+
+- Multipart form handling with `request.formData()`.
+- File validation by count, size, and MIME type.
+- Modeling metadata separately from post content.
+- Choosing storage strategy based on deployment constraints.

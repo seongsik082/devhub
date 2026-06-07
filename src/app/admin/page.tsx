@@ -31,10 +31,12 @@ export default async function AdminPage() {
     todoTaskCount,
     productCount,
     orderCount,
+    attachmentCount,
     revenue,
     users,
     products,
     orders,
+    attachments,
     weather,
   ] = await Promise.all([
     getDb().user.count(),
@@ -44,6 +46,7 @@ export default async function AdminPage() {
     getDb().todoTask.count(),
     getDb().product.count(),
     getDb().order.count(),
+    getDb().postAttachment.count(),
     getDb().order.aggregate({
       where: { status: { not: "CANCELLED" } },
       _sum: { totalAmount: true },
@@ -78,6 +81,19 @@ export default async function AdminPage() {
       },
       orderBy: { createdAt: "desc" },
       take: 20,
+    }),
+    getDb().postAttachment.findMany({
+      include: {
+        post: {
+          select: {
+            id: true,
+            title: true,
+            author: { select: { name: true } },
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 10,
     }),
     getSeoulWeather(),
   ]);
@@ -131,9 +147,9 @@ export default async function AdminPage() {
               </span>
             </div>
             <div className="panel stack">
-              <strong>상품 / 주문</strong>
+              <strong>상품 / 주문 / 첨부</strong>
               <span className="metric">
-                {productCount} / {orderCount}
+                {productCount} / {orderCount} / {attachmentCount}
               </span>
             </div>
             <div className="panel stack">
@@ -145,6 +161,37 @@ export default async function AdminPage() {
           </div>
 
           <WeatherCard weather={weather} />
+
+          <section className="panel stack">
+            <div className="section-header compact">
+              <div>
+                <h2>첨부파일 관리</h2>
+                <p className="muted">최근 게시글에 업로드된 파일을 확인합니다.</p>
+              </div>
+            </div>
+
+            {attachments.length === 0 ? (
+              <div className="portal-empty">아직 첨부파일이 없습니다.</div>
+            ) : (
+              <div className="attachment-admin-list">
+                {attachments.map((attachment) => (
+                  <Link
+                    className="attachment-admin-row"
+                    href={`/posts/${attachment.post.id}`}
+                    key={attachment.id}
+                  >
+                    <span>
+                      <strong>{attachment.fileName}</strong>
+                      <span className="meta">
+                        {attachment.post.title} · {attachment.post.author.name}
+                      </span>
+                    </span>
+                    <span className="badge">{Math.ceil(attachment.size / 1024)}KB</span>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </section>
 
           <section className="panel stack">
             <div className="section-header compact">
