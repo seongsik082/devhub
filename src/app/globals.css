@@ -324,6 +324,51 @@ textarea {
   padding: 10px;
 }
 
+.notification-list,
+.notification-mini-list {
+  display: grid;
+  gap: 10px;
+}
+
+.notification-card,
+.notification-mini {
+  display: grid;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-soft);
+  padding: 14px;
+}
+
+.notification-card {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.notification-card.unread,
+.notification-mini.unread {
+  border-color: rgba(23, 99, 232, 0.34);
+  background: #eff4ff;
+  box-shadow: 0 12px 26px rgba(23, 99, 232, 0.08);
+}
+
+.notification-card h2 {
+  margin: 8px 0 6px;
+  font-size: 20px;
+}
+
+.notification-action {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.notification-mini strong,
+.notification-mini span {
+  display: block;
+}
+
 .weather-box {
   display: grid;
   gap: 12px;
@@ -1571,6 +1616,7 @@ textarea {
   .search-toolbar,
   .shop-filter,
   .admin-search,
+  .notification-card,
   .admin-product-edit,
   .cart-row {
     grid-template-columns: 1fr;

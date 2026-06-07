@@ -60,6 +60,7 @@ User 1 ── * Order
 Order 1 ── * OrderItem
 Product 1 ── * OrderItem
 Post 1 ── * PostAttachment
+User 1 ── * Notification
 ```
 
 ## PostLike
@@ -144,6 +145,19 @@ Post 1 ── * PostAttachment
 | `unitPrice` | Int | Unit price snapshot |
 | `quantity` | Int | Ordered quantity |
 | `subtotal` | Int | `unitPrice * quantity` |
+
+## Notification
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `id` | String | Primary key |
+| `userId` | String | References `User.id` |
+| `type` | NotificationType | `COMMENT`, `ORDER`, `SECURITY`, or `SYSTEM` |
+| `title` | String | Short notification title |
+| `message` | String | Notification body |
+| `link` | String? | Optional app URL |
+| `readAt` | DateTime? | Null means unread |
+| `createdAt` | DateTime | Created timestamp |
 
 ## TodoTask
 

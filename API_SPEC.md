@@ -247,6 +247,20 @@ Allowed file types:
 
 Each file must be 1MB or smaller.
 
+## Notifications
+
+### GET `/notifications`
+
+Requires login. Shows the current user's notifications.
+
+### PATCH `/api/notifications/:notificationId/read`
+
+Requires login and notification ownership. Marks one notification as read.
+
+### PATCH `/api/notifications/read-all`
+
+Requires login. Marks all unread notifications for the current user as read.
+
 ## Shop
 
 ### POST `/api/shop/cart`

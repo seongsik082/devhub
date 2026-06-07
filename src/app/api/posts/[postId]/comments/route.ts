@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { readSession } from "@/lib/auth";
 import { getDb } from "@/lib/db";
+import { createNotification } from "@/lib/notifications";
 import { commentSchema } from "@/lib/validation";
 
 type CommentRouteContext = {
@@ -24,7 +25,7 @@ export async function POST(request: Request, context: CommentRouteContext) {
 
   const post = await getDb().post.findUnique({
     where: { id: postId },
-    select: { id: true },
+    select: { id: true, title: true, authorId: true },
   });
 
   if (!post) {
@@ -41,6 +42,16 @@ export async function POST(request: Request, context: CommentRouteContext) {
       id: true,
     },
   });
+
+  if (post.authorId !== session.id) {
+    await createNotification({
+      userId: post.authorId,
+      type: "COMMENT",
+      title: "새 댓글이 달렸습니다",
+      message: `${session.name}님이 "${post.title}" 글에 댓글을 남겼습니다.`,
+      link: `/posts/${post.id}`,
+    });
+  }
 
   return NextResponse.json({ comment }, { status: 201 });
 }

@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { readSession } from "@/lib/auth";
+import { getDb } from "@/lib/db";
 import { LogoutButton } from "@/components/logout-button";
 import Link from "next/link";
 
@@ -9,6 +10,17 @@ export default async function DashboardPage() {
   if (!session) {
     redirect("/login");
   }
+
+  const [unreadCount, recentNotifications] = await Promise.all([
+    getDb().notification.count({
+      where: { userId: session.id, readAt: null },
+    }),
+    getDb().notification.findMany({
+      where: { userId: session.id },
+      orderBy: { createdAt: "desc" },
+      take: 3,
+    }),
+  ]);
 
   return (
     <main className="page-shell">
@@ -31,6 +43,9 @@ export default async function DashboardPage() {
             <Link className="button" href="/account/profile">
               프로필
             </Link>
+            <Link className="button" href="/notifications">
+              알림 {unreadCount > 0 ? `(${unreadCount})` : ""}
+            </Link>
             <LogoutButton />
           </div>
         </nav>
@@ -49,6 +64,7 @@ export default async function DashboardPage() {
               <span className="muted">2차: 게시판과 댓글</span>
               <span className="muted">3차: 할 일 관리 진행 중</span>
               <span className="muted">5차: 프로필과 첨부파일</span>
+              <span className="muted">7차: 알림 시스템</span>
             </div>
             <div className="panel stack">
               <strong>로그인 계정</strong>
@@ -58,6 +74,34 @@ export default async function DashboardPage() {
               <strong>권한</strong>
               <span className="muted">{session.role}</span>
             </div>
+          </div>
+
+          <div className="panel stack">
+            <div className="section-header compact">
+              <div>
+                <strong>최근 알림</strong>
+                <p className="muted">댓글, 주문, 보안 이벤트를 모아봅니다.</p>
+              </div>
+              <Link className="small-link" href="/notifications">
+                전체보기
+              </Link>
+            </div>
+            {recentNotifications.length === 0 ? (
+              <div className="portal-empty">아직 알림이 없습니다.</div>
+            ) : (
+              <div className="notification-mini-list">
+                {recentNotifications.map((notification) => (
+                  <Link
+                    className={`notification-mini ${notification.readAt ? "" : "unread"}`}
+                    href={notification.link ?? "/notifications"}
+                    key={notification.id}
+                  >
+                    <strong>{notification.title}</strong>
+                    <span className="meta">{notification.message}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="panel stack">

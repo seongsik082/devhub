@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { readSession } from "@/lib/auth";
 import { getDb } from "@/lib/db";
+import { createNotification } from "@/lib/notifications";
+import { orderStatusLabels } from "@/lib/shop";
 import { adminOrderStatusSchema } from "@/lib/validation";
 
 type RouteContext = {
@@ -25,7 +27,15 @@ export async function PATCH(request: Request, context: RouteContext) {
   const order = await getDb().order.update({
     where: { id: orderId },
     data: { status: parsed.data.status },
-    select: { id: true, status: true },
+    select: { id: true, status: true, userId: true },
+  });
+
+  await createNotification({
+    userId: order.userId,
+    type: "ORDER",
+    title: "주문 상태가 변경되었습니다",
+    message: `주문 ${order.id.slice(-8)} 상태가 '${orderStatusLabels[order.status]}'(으)로 변경되었습니다.`,
+    link: "/orders",
   });
 
   return NextResponse.json({ order });

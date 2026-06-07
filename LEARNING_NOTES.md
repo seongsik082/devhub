@@ -237,3 +237,30 @@ Most backend systems need to know who is making a request before they can decide
 - Building dynamic Prisma `where` and `orderBy` objects.
 - Combining search with pagination.
 - Keeping search state shareable through URLs.
+
+## Milestone 7: Notifications
+
+### Notification Model
+
+- `Notification` belongs to a user and stores type, title, message, optional link, and read timestamp.
+- `NotificationType` separates events such as comments, orders, security, and system messages.
+- `readAt = null` means the notification is unread.
+
+### Event Triggers
+
+- A new comment creates a notification for the post author, except when the author comments on their own post.
+- Admin order status changes create a notification for the order owner.
+- Admin password resets create a security notification for the affected user.
+
+### User Flow
+
+- `/notifications` lists recent notifications.
+- Users can mark one notification as read or mark all unread notifications as read.
+- The dashboard shows unread count and recent notifications.
+
+### Backend Skills Practiced
+
+- Event-driven thinking inside ordinary CRUD APIs.
+- Modeling read/unread state.
+- User-scoped update APIs.
+- Reusing notification creation through a small helper function.

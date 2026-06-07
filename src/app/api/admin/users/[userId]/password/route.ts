@@ -2,6 +2,7 @@ import { hash } from "bcryptjs";
 import { NextResponse } from "next/server";
 import { readAdminSession } from "@/lib/admin";
 import { getDb } from "@/lib/db";
+import { createNotification } from "@/lib/notifications";
 import { adminPasswordSchema } from "@/lib/validation";
 
 type AdminPasswordRouteContext = {
@@ -37,6 +38,14 @@ export async function PATCH(request: Request, context: AdminPasswordRouteContext
   await getDb().user.update({
     where: { id: userId },
     data: { passwordHash },
+  });
+
+  await createNotification({
+    userId,
+    type: "SECURITY",
+    title: "비밀번호가 관리자에 의해 변경되었습니다",
+    message: `${admin.name} 관리자가 계정 비밀번호를 변경했습니다.`,
+    link: "/account/password",
   });
 
   return NextResponse.json({ ok: true });

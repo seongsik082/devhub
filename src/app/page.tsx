@@ -79,6 +79,7 @@ export default async function Home() {
             <Link href="/todos">할 일</Link>
             <Link href="/posts">게시판</Link>
             <Link href="/shop">쇼핑</Link>
+            {session ? <Link href="/notifications">알림</Link> : null}
             <Link href="/dashboard">대시보드</Link>
             {session?.role === "ADMIN" ? <Link href="/admin">관리자</Link> : null}
           </nav>
@@ -221,6 +222,9 @@ export default async function Home() {
                   <Link className="button" href="/account/profile">
                     프로필
                   </Link>
+                  <Link className="button" href="/notifications">
+                    알림
+                  </Link>
                 </div>
               ) : (
                 <div className="portal-empty">
@@ -254,6 +258,7 @@ export default async function Home() {
                 <span>날씨 연결 추가</span>
                 <span>쇼핑/주문 4차 진행</span>
                 <span>프로필/첨부 5차 진행</span>
+                <span>알림 시스템 7차 진행</span>
               </div>
             </section>
           </aside>
