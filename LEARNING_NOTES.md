@@ -208,3 +208,32 @@ Most backend systems need to know who is making a request before they can decide
 - File validation by count, size, and MIME type.
 - Modeling metadata separately from post content.
 - Choosing storage strategy based on deployment constraints.
+
+## Milestone 6: Search, Filters, And Pagination
+
+### Board Search
+
+- `/posts` accepts `q` and `page` query params.
+- The server searches post title, content, and author name with Prisma `contains`.
+- Results are paginated with `skip` and `take`.
+- Pagination links preserve the current search query.
+
+### Shop Filters
+
+- `/shop` accepts `q`, `stock`, and `sort` query params.
+- Product search checks name and description.
+- The stock filter can show only purchasable products.
+- Sorting supports newest, low price, and high price.
+
+### Admin Operations Search
+
+- `/admin` accepts a global `q` query and an `orderStatus` filter.
+- The same search box narrows users, products, orders, and attachments.
+- This matches a common admin dashboard pattern: global search plus focused status filters.
+
+### Backend Skills Practiced
+
+- Designing stable URL query params.
+- Building dynamic Prisma `where` and `orderBy` objects.
+- Combining search with pagination.
+- Keeping search state shareable through URLs.

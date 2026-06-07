@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Prisma } from "@prisma/client";
 import { AddToCartButton } from "@/components/add-to-cart-button";
 import { CartItemControls } from "@/components/cart-item-controls";
 import { CheckoutButton } from "@/components/checkout-button";
@@ -7,12 +8,40 @@ import { readSession } from "@/lib/auth";
 import { getDb } from "@/lib/db";
 import { formatCurrency } from "@/lib/shop";
 
-export default async function ShopPage() {
+type ShopPageProps = {
+  searchParams: Promise<{ q?: string; stock?: string; sort?: string }>;
+};
+
+export default async function ShopPage({ searchParams }: ShopPageProps) {
+  const params = await searchParams;
   const session = await readSession();
+  const query = (params.q ?? "").trim();
+  const stockFilter = params.stock === "available" ? "available" : "all";
+  const sort = ["priceAsc", "priceDesc"].includes(params.sort ?? "")
+    ? params.sort
+    : "newest";
+  const productWhere: Prisma.ProductWhereInput = {
+    isActive: true,
+    ...(stockFilter === "available" ? { stock: { gt: 0 } } : {}),
+    ...(query
+      ? {
+          OR: [
+            { name: { contains: query, mode: "insensitive" } },
+            { description: { contains: query, mode: "insensitive" } },
+          ],
+        }
+      : {}),
+  };
+  const productOrderBy: Prisma.ProductOrderByWithRelationInput =
+    sort === "priceAsc"
+      ? { price: "asc" }
+      : sort === "priceDesc"
+        ? { price: "desc" }
+        : { createdAt: "desc" };
   const [products, cartItems] = await Promise.all([
     getDb().product.findMany({
-      where: { isActive: true },
-      orderBy: { createdAt: "desc" },
+      where: productWhere,
+      orderBy: productOrderBy,
     }),
     session
       ? getDb().cartItem.findMany({
@@ -77,17 +106,48 @@ export default async function ShopPage() {
             <div className="section-header compact">
               <div>
                 <h2>상품</h2>
-                <p className="muted">현재 판매 중인 테스트 상품입니다.</p>
+                <p className="muted">현재 판매 중인 테스트 상품입니다. 검색과 정렬을 연습합니다.</p>
               </div>
               <Link className="small-link" href="/orders">
                 주문 내역
               </Link>
             </div>
 
+            <form className="search-toolbar shop-filter" action="/shop">
+              <input
+                aria-label="상품 검색"
+                defaultValue={query}
+                name="q"
+                placeholder="상품명 또는 설명 검색"
+              />
+              <select aria-label="재고 필터" defaultValue={stockFilter} name="stock">
+                <option value="all">전체 재고</option>
+                <option value="available">구매 가능</option>
+              </select>
+              <select aria-label="상품 정렬" defaultValue={sort ?? "newest"} name="sort">
+                <option value="newest">최신순</option>
+                <option value="priceAsc">낮은 가격순</option>
+                <option value="priceDesc">높은 가격순</option>
+              </select>
+              <button className="button primary" type="submit">
+                적용
+              </button>
+              {query || stockFilter !== "all" || sort !== "newest" ? (
+                <Link className="button" href="/shop">
+                  초기화
+                </Link>
+              ) : null}
+            </form>
+
+            <p className="meta result-meta">
+              {query ? `"${query}" 검색 결과 ` : "상품 "}
+              {products.length}개
+            </p>
+
             {products.length === 0 ? (
               <div className="panel portal-empty">
-                <strong>판매 중인 상품이 없습니다.</strong>
-                <span>관리자 페이지에서 테스트 상품을 추가해주세요.</span>
+                <strong>조건에 맞는 상품이 없습니다.</strong>
+                <span>검색어나 필터를 바꿔보세요.</span>
               </div>
             ) : (
               <div className="shop-product-list">

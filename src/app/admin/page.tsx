@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import type { OrderStatus, Prisma } from "@prisma/client";
 import { AdminOrderActions } from "@/components/admin-order-actions";
 import { AdminProductActions } from "@/components/admin-product-actions";
 import { AdminUserActions } from "@/components/admin-user-actions";
@@ -12,8 +13,19 @@ import { formatDateTime } from "@/lib/format";
 import { formatCurrency, orderStatusLabels } from "@/lib/shop";
 import { getSeoulWeather } from "@/lib/weather";
 
-export default async function AdminPage() {
+type AdminPageProps = {
+  searchParams: Promise<{ q?: string; orderStatus?: string }>;
+};
+
+export default async function AdminPage({ searchParams }: AdminPageProps) {
+  const params = await searchParams;
   const session = await readSession();
+  const query = (params.q ?? "").trim();
+  const orderStatus = ["PENDING", "PAID", "SHIPPED", "CANCELLED"].includes(
+    params.orderStatus ?? "",
+  )
+    ? (params.orderStatus as OrderStatus)
+    : "ALL";
 
   if (!session) {
     redirect("/login?next=/admin");
@@ -52,6 +64,14 @@ export default async function AdminPage() {
       _sum: { totalAmount: true },
     }),
     getDb().user.findMany({
+      where: query
+        ? {
+            OR: [
+              { name: { contains: query, mode: "insensitive" } },
+              { email: { contains: query, mode: "insensitive" } },
+            ],
+          }
+        : undefined,
       orderBy: { createdAt: "desc" },
       select: {
         id: true,
@@ -71,10 +91,31 @@ export default async function AdminPage() {
       take: 30,
     }),
     getDb().product.findMany({
+      where: query
+        ? {
+            OR: [
+              { name: { contains: query, mode: "insensitive" } },
+              { description: { contains: query, mode: "insensitive" } },
+            ],
+          }
+        : undefined,
       orderBy: { createdAt: "desc" },
       take: 30,
     }),
     getDb().order.findMany({
+      where: {
+        ...(orderStatus !== "ALL" ? { status: orderStatus } : {}),
+        ...(query
+          ? {
+              OR: [
+                { id: { contains: query, mode: "insensitive" } },
+                { user: { name: { contains: query, mode: "insensitive" } } },
+                { user: { email: { contains: query, mode: "insensitive" } } },
+                { items: { some: { productName: { contains: query, mode: "insensitive" } } } },
+              ],
+            }
+          : {}),
+      } satisfies Prisma.OrderWhereInput,
       include: {
         user: { select: { name: true, email: true } },
         items: true,
@@ -83,6 +124,15 @@ export default async function AdminPage() {
       take: 20,
     }),
     getDb().postAttachment.findMany({
+      where: query
+        ? {
+            OR: [
+              { fileName: { contains: query, mode: "insensitive" } },
+              { post: { title: { contains: query, mode: "insensitive" } } },
+              { post: { author: { name: { contains: query, mode: "insensitive" } } } },
+            ],
+          }
+        : undefined,
       include: {
         post: {
           select: {
@@ -128,6 +178,31 @@ export default async function AdminPage() {
               회원 권한, 비밀번호 변경, 상품 재고, 주문 상태를 한 곳에서 관리합니다.
             </p>
           </div>
+
+          <form className="search-toolbar admin-search" action="/admin">
+            <input
+              aria-label="관리자 검색"
+              defaultValue={query}
+              name="q"
+              placeholder="사용자, 상품, 주문, 첨부 검색"
+            />
+            <select aria-label="주문 상태 필터" defaultValue={orderStatus} name="orderStatus">
+              <option value="ALL">모든 주문 상태</option>
+              {Object.entries(orderStatusLabels).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+            <button className="button primary" type="submit">
+              검색
+            </button>
+            {query || orderStatus !== "ALL" ? (
+              <Link className="button" href="/admin">
+                초기화
+              </Link>
+            ) : null}
+          </form>
 
           <div className="dashboard-grid admin-metrics">
             <div className="panel stack">

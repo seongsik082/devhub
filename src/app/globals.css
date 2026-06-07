@@ -626,6 +626,55 @@ textarea {
   padding: 16px;
 }
 
+.search-toolbar {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) auto auto;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 10px 26px rgba(16, 24, 40, 0.06);
+  margin-bottom: 14px;
+  padding: 12px;
+}
+
+.search-toolbar input,
+.search-toolbar select {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: white;
+  padding: 0 12px;
+}
+
+.shop-filter {
+  grid-template-columns: minmax(200px, 1fr) minmax(140px, 0.32fr) minmax(150px, 0.34fr) auto auto;
+}
+
+.admin-search {
+  grid-template-columns: minmax(220px, 1fr) minmax(170px, 0.32fr) auto auto;
+}
+
+.result-meta {
+  margin: 0 0 14px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.button.disabled {
+  pointer-events: none;
+  opacity: 0.45;
+}
+
 .account-result {
   display: flex;
   align-items: center;
@@ -1519,6 +1568,9 @@ textarea {
   .shop-hero,
   .shop-layout,
   .profile-preview,
+  .search-toolbar,
+  .shop-filter,
+  .admin-search,
   .admin-product-edit,
   .cart-row {
     grid-template-columns: 1fr;
